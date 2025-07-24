@@ -1,17 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:salesmate_chat_flutter_sdk/salesmate_chat.dart';
+import 'package:flutter/widgets.dart';
 
-void main() {
+import 'salesmate_chat_platform_service.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SalesmateChatSdk.initialize(
-    SalesmateChatSettings(
-      workspaceId: "4767fb55-97c3-4911-8cd2-6c5addeb2723",
-      appKey: "e4bd8170-7f09-11eb-a375-eb59ba1215d5",
-      tenantId: "chatplatform.salesmate.io",
-      environment: ChatEnvironment.PRODUCTION,
-    ),
-  );
-
-  runApp(const ChatApp());
+  SalesmateChatPlatformService.initialize();
 }
