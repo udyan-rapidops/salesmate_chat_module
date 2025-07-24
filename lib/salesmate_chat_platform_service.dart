@@ -91,8 +91,6 @@ class SalesmateChatPlatformService {
   }
 
   static Future<void> _handleLogin(dynamic arguments) async {
-    print('Login Started');
-
     final params = Map<String, dynamic>.from(arguments);
     final userId = params['userId'] as String;
     final userDetailsMap = Map<String, dynamic>.from(params['userDetails']);
@@ -107,17 +105,15 @@ class SalesmateChatPlatformService {
     SalesmateChatSdk.instance.login(
       userId,
       userDetails,
-      () {
-        print('Login success');
-      },
-      (error) => print('Login error: $error'),
+      () {},
+      (error) {},
     );
   }
 
   static Future<void> _handleLogout() async {
     SalesmateChatSdk.instance.logout(
       () {},
-      (error) => log('Logout error: $error'),
+      (error) {},
     );
   }
 
@@ -130,14 +126,14 @@ class SalesmateChatPlatformService {
       firstName: userDetailsMap['firstName'],
       lastName: userDetailsMap['lastName'],
       email: userDetailsMap['email'],
-      userId: userDetailsMap['userId'],
+      userHash: userDetailsMap['userHash'],
     );
 
     SalesmateChatSdk.instance.update(
       userId,
       userDetails,
       () {},
-      (error) => log('Update error: $error'),
+      (error) {},
     );
   }
 
@@ -155,7 +151,7 @@ class SalesmateChatPlatformService {
     SalesmateChatSdk.instance.sendTokenToSalesmate(
       deviceToken,
       () {},
-      (error) => log('Send token error: $error'),
+      (error) {},
     );
   }
 }

@@ -7,6 +7,8 @@ import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 
 class SalesmateChat {
@@ -21,33 +23,27 @@ class SalesmateChat {
             engineCache.get(FLUTTER_ENGINE_CACHE)?.let(action)
         }
 
-        private fun <T> invokeMethodWithResult(
+        private suspend fun <T> invokeMethodWithResultSuspend(
             methodName: String, arguments: Any? = null, defaultValue: T
-        ): T {
-            var result: T = defaultValue
-
+        ): T = suspendCancellableCoroutine { cont ->
             withEngine { engine ->
                 MethodChannel(
                     engine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME
                 ).invokeMethod(methodName, arguments, object : MethodChannel.Result {
                     @Suppress("UNCHECKED_CAST")
                     override fun success(response: Any?) {
-                        result = response as? T ?: defaultValue
+                        cont.resume(response as? T ?: defaultValue)
                     }
 
-                    override fun error(
-                        errorCode: String, errorMessage: String?, errorDetails: Any?
-                    ) {
-                        result = defaultValue
+                    override fun error(code: String, msg: String?, details: Any?) {
+                        cont.resume(defaultValue)
                     }
 
                     override fun notImplemented() {
-                        result = defaultValue
+                        cont.resume(defaultValue)
                     }
                 })
             }
-
-            return result
         }
 
         private fun invokeMethod(methodName: String, arguments: Any? = null) {
@@ -88,20 +84,18 @@ class SalesmateChat {
             invokeMethod("startMessenger")
         }
 
-        @JvmStatic
-        fun isInitialised(): Boolean {
-            return invokeMethodWithResult("isInitialised", null, false)
+        suspend fun isInitialised(): Boolean {
+            return invokeMethodWithResultSuspend("isInitialised", null, false)
         }
 
-        @JvmStatic
-        fun getVisitorId(): String {
-            return invokeMethodWithResult("getVisitorId", null, "")
+        suspend fun getVisitorId(): String {
+            return invokeMethodWithResultSuspend("getVisitorId", null, "")
         }
 
-        @JvmStatic
-        fun getUserHash(): String {
-            return invokeMethodWithResult("getUserHash", null, "")
+        suspend fun getUserHash(): String {
+            return invokeMethodWithResultSuspend("getUserHash", null, "")
         }
+
 
         @JvmStatic
         fun login(userId: String, userDetails: UserDetails) {
@@ -137,10 +131,8 @@ class SalesmateChat {
         }
 
         @JvmStatic
-        fun isSalesmateChatSDKPush(
-            valueMap: Map<String, Any>
-        ): Boolean {
-            return invokeMethodWithResult("isSalesmateChatSDKPush", valueMap, false)
+        suspend fun isSalesmateChatSDKPush(valueMap: Map<String, Any>): Boolean {
+            return invokeMethodWithResultSuspend("isSalesmateChatSDKPush", valueMap, false)
         }
 
         @JvmStatic
