@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "1.9.0"
+    ext.kotlin_version = "1.9.24"
     repositories {
         google()
         mavenCentral()
@@ -58,8 +58,10 @@ android {
 }
 
 dependencies {
-    implementation libs.kotlin.stdlib
-    implementation libs.gson
+    //noinspection UseTomlInstead
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    //noinspection UseTomlInstead
+    implementation "com.google.code.gson:gson:2.13.1"
 }
 
 flutter {
